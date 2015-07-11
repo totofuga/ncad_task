@@ -1,4 +1,4 @@
-OBJS = server.o ncad_task.o arp.o mac_table.o server_detect.o
+OBJS = server.o ncad_task.o arp.o mac_table.o server_detect.o server_exclusion.o
 .SUFFIXES: .c .o
 
 ncad_task: ${OBJS}

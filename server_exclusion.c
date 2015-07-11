@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -29,7 +30,7 @@ void server_exclusion(const struct ether_arp *arppack) {
     sockaddr.sll_halen    = ETH_ALEN;
 
     sockaddr.sll_ifindex = if_nametoindex(context.interface_name);
-    memset(sockaddr.sll_addr, arppack.arp_tha, 6);
+    memcpy(sockaddr.sll_addr, arppack->arp_tha, 6);
 
     /* パケット作成 */
     struct  ether_arp replay_arppack;
@@ -44,11 +45,11 @@ void server_exclusion(const struct ether_arp *arppack) {
     replay_arppack.arp_op  = htons(ARPOP_REPLY);
 
     /* 送信先は不正な受信元*/
-    memcpy(replay_arppack.arp_tha, arppack.arp_sha, 6);
-    memcpy(replay_arppack.arp_tpa, arppack.arp_spa,4);
+    memcpy(replay_arppack.arp_tha, arppack->arp_sha, 6);
+    memcpy(replay_arppack.arp_tpa, arppack->arp_spa,4);
 
     /* IPは探索に来たIPと見せかける */
-    memcpy(replay_arppack.arp_spa, arppack.arp_tpa,4);
+    memcpy(replay_arppack.arp_spa, arppack->arp_tpa,4);
 
     /* そしてMACアドレスにゴミを入れる*/
     replay_arppack.arp_tha[0] = 0;

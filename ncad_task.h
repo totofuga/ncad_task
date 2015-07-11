@@ -27,3 +27,6 @@ int mac_table_has(const unsigned char *macaddr);
 
 /* 検知*/
 void server_detect(const struct ether_arp *arppack);
+
+/* 排除 */
+void server_exclusion(const struct ether_arp *arppack);
