@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
+#include <getopt.h>
 
 /* ARP(RFC826 らしい) */
 
@@ -13,10 +14,30 @@ void _register_my_macaddr();
 
 int main (int argc, char *argv[]) {
 
+    int opt;
+
+    // default
     context.mode            = RUN_MODE_DETECT;
     context.email_from      = "fujita.yoshihiko+from@gmail.com";
     context.email_to        = "fujita.yoshihiko+to@gmail.com";
     context.interface_name  = "eth0";
+
+    while ((opt = getopt(argc, argv, "det:")) != -1) {
+        switch (opt) {
+            case 'd':
+                context.mode = RUN_MODE_DETECT;
+                break;
+            case 'e':
+                context.mode = RUN_MODE_EXCLUSION;
+                break;
+            case 't':
+                context.mode = RUN_MODE_EXCLUSION;
+                context.delay_sec = atol(optarg);
+                break;
+            case 'i':
+                break;
+        }
+    }
 
     context.socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
     if(context.socket == -1 ) {
