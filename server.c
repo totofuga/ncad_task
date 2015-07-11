@@ -1,8 +1,8 @@
+#include "ncad_task.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "ncad_task.h"
 
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -56,7 +56,7 @@ void server_start() {
         }
 
         arppack = (struct ether_arp*) buf;
-        
+
         /* arpのテーブル更新情報取得のみ取得するのでREQUESTでかつブロードキャストのみ取得*/
         if(ntohs(arppack->ea_hdr.ar_op) != ARPOP_REQUEST || !arp_is_target_broadcast(arppack))  {
             continue;
@@ -64,7 +64,11 @@ void server_start() {
 
         /* macアドレスが許可テーブルに登録されているかどうか調べる */
         if(!mac_table_has(arppack->arp_sha)) {
-            printf("2\n");
+            switch(context.mode) {
+                case RUN_MODE_DETECT:
+                    server_detect(arppack);
+                    break;
+            }
             continue;
         }
 

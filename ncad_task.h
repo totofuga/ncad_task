@@ -9,6 +9,8 @@ typedef enum {
 struct ncad_task_context {
     run_mode mode;
     long delay_sec;
+    char* email_from;
+    char* email_to;
 }; 
 
 extern struct ncad_task_context context;
@@ -18,5 +20,8 @@ void server_start();
 
 /* macアドレス許可テーブル */
 int mac_table_init();
-void mac_table_add(char* macaddr);
-int mac_table_has(char *macaddr);
+void mac_table_add(const unsigned char* macaddr);
+int mac_table_has(const unsigned char *macaddr);
+
+/* 検知*/
+void server_detect(const struct ether_arp *arppack);

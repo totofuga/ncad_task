@@ -9,14 +9,14 @@
 #define HASH_SIZE 40000 
 #define KEY_LENGTH 6*2+1
 
-static char* _generate_key (char *key, char *macaddr);
+static char* _generate_key (char *key, const unsigned char *macaddr);
 static void _free_key(char *key);
 
 int mac_table_init() {
     hcreate(HASH_SIZE);
 }
 
-void mac_table_add(char* macaddr){
+void mac_table_add(const unsigned char* macaddr){
     char *key = malloc(KEY_LENGTH);
     ENTRY e;   
 
@@ -24,14 +24,14 @@ void mac_table_add(char* macaddr){
     _generate_key(key, macaddr);
 
     e.key  = key;
-    e.data = macaddr;
+    e.data = (void*)macaddr; /* 中身変更される事は無いからconst外し */
     if(!hsearch(e, ENTER)) {
 	perror("mac_table_add error");
 	exit(1);
     }
 }
 
-int mac_table_has(char *macaddr) {
+int mac_table_has(const unsigned char *macaddr) {
     char key[KEY_LENGTH];
     ENTRY e;   
 
@@ -41,7 +41,7 @@ int mac_table_has(char *macaddr) {
     return hsearch(e, FIND) != NULL;
 }
 
-char* _generate_key (char *key, char *macaddr) {
+char* _generate_key (char *key, const unsigned char *macaddr) {
     sprintf(key, "%02X%02X%02X%02X%02X%02X", 
 	macaddr[0], 
 	macaddr[1], 
@@ -58,8 +58,8 @@ void _free_key(char *key){ free(key); }
 #include "test.h"
 
 int main() {
-    char mac_addr1[] = {0x11, 0x12, 0x13, 0x14, 0x15, 0x16};
-    char mac_addr2[] = {0x21, 0x22, 0x23, 0x24, 0x25, 0x26};
+    unsigned char mac_addr1[] = {0x11, 0x12, 0x13, 0x14, 0x15, 0x16};
+    unsigned char mac_addr2[] = {0x21, 0x22, 0x23, 0x24, 0x25, 0x26};
     char key[KEY_LENGTH];
     _generate_key(key, mac_addr1);
     IS(key, "111213141516");
