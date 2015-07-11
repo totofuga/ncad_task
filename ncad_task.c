@@ -13,9 +13,9 @@ void _register_my_macaddr();
 
 int main (int argc, char *argv[]) {
 
-    context.mode       = RUN_MODE_DETECT;
-    context.email_from = "fujita.yoshihiko+from@gmail.com";
-    context.email_to   = "fujita.yoshihiko+to@gmail.com";
+    context.mode            = RUN_MODE_DETECT;
+    context.email_from      = "fujita.yoshihiko+from@gmail.com";
+    context.email_to        = "fujita.yoshihiko+to@gmail.com";
     context.interface_name  = "eth0";
 
     context.socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
@@ -24,13 +24,14 @@ int main (int argc, char *argv[]) {
         exit(1);
     }
 
-    /* 自分自身のMACアドレスは拒否しないように最初に登録する */
-    _register_my_macaddr();
-
     if(!mac_table_init()) {
         fprintf(stderr, "mac_table_init error");
         exit(1);
     }
+
+    /* 自分自身のMACアドレスは拒否しないように最初に登録する */
+    _register_my_macaddr();
+
     server_start();
 
     return 0;
