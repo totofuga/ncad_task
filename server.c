@@ -22,9 +22,9 @@ static void _print_ip(char* name, unsigned char *ipaddr);
 static void _print_ethaddr(char* name, unsigned char *ethaddr);
 
 void server_start() {
-    int arp_sock = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
+    context.socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
 
-    if(arp_sock == -1 ) {
+    if(context.socket == -1 ) {
         perror("socket error");
         exit(1);
     }
@@ -39,16 +39,17 @@ void server_start() {
     sockaddr.sll_family   = AF_PACKET;
     sockaddr.sll_protocol = htons(ETH_P_ARP);
     sockaddr.sll_ifindex  = 0; /* 0だと任意のinterfaceにマッチ */
-    sockaddr.sll_ifindex  = PACKET_HOST; /* TODO:ブロードキャストだけ取得だとうまくいかなかったあとで原因しらべる */
+    sockaddr.sll_pktype   = PACKET_BROADCAST;
+    sockaddr.sll_halen    = ETH_ALEN;
 
-    if(bind(arp_sock, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) == -1){
+    if(bind(context.socket, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) == -1){
         perror("bind error");
         exit(1);
     }
 
     while(1) {
         memset(buf, 0, sizeof(buf));
-        arp_size = recv(arp_sock, buf, sizeof(buf), 0); 
+        arp_size = recv(context.socket, buf, sizeof(buf), 0); 
 
         if(arp_size < 0) {
             perror("arp read error");

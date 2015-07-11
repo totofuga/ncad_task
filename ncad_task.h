@@ -7,6 +7,7 @@ typedef enum {
 } run_mode; 
 
 struct ncad_task_context {
+    int socket
     run_mode mode;
     long delay_sec;
     char* email_from;
