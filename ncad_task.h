@@ -4,14 +4,15 @@ typedef enum {
     RUN_MODE_DETECT,    /* 検知 */
     RUN_MODE_EXCLUSION, /* 排除 */
     RUN_MODE_DELAY      /* 遅延 */
-} run_mode; 
+} run_mode;
 
 struct ncad_task_context {
-    int socket
+    int socket;
     run_mode mode;
     long delay_sec;
     char* email_from;
     char* email_to;
+    char* interface_name;
 }; 
 
 extern struct ncad_task_context context;

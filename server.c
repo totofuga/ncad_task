@@ -22,12 +22,6 @@ static void _print_ip(char* name, unsigned char *ipaddr);
 static void _print_ethaddr(char* name, unsigned char *ethaddr);
 
 void server_start() {
-    context.socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
-
-    if(context.socket == -1 ) {
-        perror("socket error");
-        exit(1);
-    }
 
     struct sockaddr_ll sockaddr;
     char buf[256];
@@ -39,7 +33,7 @@ void server_start() {
     sockaddr.sll_family   = AF_PACKET;
     sockaddr.sll_protocol = htons(ETH_P_ARP);
     sockaddr.sll_ifindex  = 0; /* 0だと任意のinterfaceにマッチ */
-    sockaddr.sll_pktype   = PACKET_BROADCAST;
+    sockaddr.sll_pkttype  = PACKET_BROADCAST;
     sockaddr.sll_halen    = ETH_ALEN;
 
     if(bind(context.socket, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) == -1){

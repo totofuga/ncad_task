@@ -25,10 +25,10 @@ void server_exclusion(const struct ether_arp *arppack) {
     memset(&sockaddr, 0x0, sizeof(sockaddr));
     sockaddr.sll_family   = AF_PACKET;
     sockaddr.sll_protocol = htons(ETH_P_ARP);
-    sockaddr.sll_pktype   = PACKET_HOST;
+    sockaddr.sll_pkttype   = PACKET_HOST;
     sockaddr.sll_halen    = ETH_ALEN;
 
-    sockaddr.sll_ifindex = if_nametoindex("eth0");
+    sockaddr.sll_ifindex = if_nametoindex(context.interface_name);
     memset(sockaddr.sll_addr, arppack.arp_tha, 6);
 
     /* パケット作成 */
