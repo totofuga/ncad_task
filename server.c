@@ -63,6 +63,9 @@ void server_start() {
                 case RUN_MODE_DETECT:
                     server_detect(arppack);
                     break;
+                case RUN_MODE_EXCLUSION:
+                    server_exclusion(arppack); 
+                    break;
             }
             continue;
         }
