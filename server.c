@@ -56,6 +56,18 @@ void server_start() {
         }
 
         arppack = (struct ether_arp*) buf;
+        
+        /* arpのテーブル更新情報取得のみ取得するのでREQUESTでかつブロードキャストのみ取得*/
+        if(ntohs(arppack->ea_hdr.ar_op) != ARPOP_REQUEST || !arp_is_target_broadcast(arppack))  {
+            continue;
+        }
+
+        /* macアドレスが許可テーブルに登録されているかどうか調べる */
+        if(!mac_table_has(arppack->arp_sha)) {
+            printf("2\n");
+            continue;
+        }
+
 
         printf("operation : %d\n", ntohs(arppack->ea_hdr.ar_op));
         _print_ethaddr("sender hardware address", arppack->arp_sha);

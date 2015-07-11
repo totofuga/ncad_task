@@ -1,6 +1,7 @@
 #include <search.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "ncad_task.h"
 
 /* struct hsearch_data mac_table */
 
@@ -73,6 +74,9 @@ int main() {
     OK(mac_table_has(mac_addr1));
     OK(!mac_table_has(mac_addr2));
 
+    mac_table_add(mac_addr2);
+    OK(mac_table_has(mac_addr1));
+    OK(mac_table_has(mac_addr2));
     return 0;
 }
 
