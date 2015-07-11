@@ -5,6 +5,7 @@
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <getopt.h>
+#include <signal.h>
 
 /* ARP(RFC826 らしい) */
 
@@ -16,13 +17,14 @@ int main (int argc, char *argv[]) {
 
     int opt;
 
-    // default
+    /* contextの初期化 */
+    // default value
     context.mode            = RUN_MODE_DETECT;
     context.email_from      = "fujita.yoshihiko+from@gmail.com";
     context.email_to        = "fujita.yoshihiko+to@gmail.com";
     context.interface_name  = "eth0";
 
-    while ((opt = getopt(argc, argv, "det:")) != -1) {
+    while ((opt = getopt(argc, argv, "des:i:f:t:")) != -1) {
         switch (opt) {
             case 'd':
                 context.mode = RUN_MODE_DETECT;
@@ -30,12 +32,18 @@ int main (int argc, char *argv[]) {
             case 'e':
                 context.mode = RUN_MODE_EXCLUSION;
                 break;
-            case 't':
-                context.mode = RUN_MODE_EXCLUSION;
+            case 's':
+                context.mode = RUN_MODE_DELAY;
                 context.delay_sec = atol(optarg);
                 break;
             case 'i':
+                context.interface_name  = optarg;
                 break;
+            case 'f':
+                context.email_from = optarg;
+                break;
+            case 't':
+                context.email_from = optarg;
         }
     }
 
@@ -45,6 +53,14 @@ int main (int argc, char *argv[]) {
         exit(1);
     }
 
+    /* 
+        簡易的にRUN_MODE_DELAYの場合のゾンビ回避 
+        TODO: 同じMacAddressに対して別のプロセスが複製されるのはが嫌な場合は
+        ちゃんとsignalとってステータス管理する
+    */
+    signal(SIGCHLD, SIG_IGN);
+
+    /* アクセス許可テーブルの初期化 */
     if(!mac_table_init()) {
         fprintf(stderr, "mac_table_init error");
         exit(1);

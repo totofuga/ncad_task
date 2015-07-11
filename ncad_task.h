@@ -17,16 +17,22 @@ struct ncad_task_context {
 
 extern struct ncad_task_context context;
 
-int arp_is_target_broadcast (const struct ether_arp* arppack);
+/* サーバー起動 */
 void server_start();
+
 
 /* macアドレス許可テーブル */
 int mac_table_init();
 void mac_table_add(const unsigned char* macaddr);
 int mac_table_has(const unsigned char *macaddr);
 
+/* サーバーアクション */
 /* 検知*/
 void server_detect(const struct ether_arp *arppack);
-
 /* 排除 */
 void server_exclusion(const struct ether_arp *arppack);
+/* 遅延 */
+void server_delay(const struct ether_arp *arppack);
+
+
+int arp_is_target_broadcast (const struct ether_arp* arppack);
