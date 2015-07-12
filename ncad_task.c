@@ -28,7 +28,6 @@ int main (int argc, char *argv[]) {
     context.email_from        = "fujita.yoshihiko+from@gmail.com";
     context.email_to          = "fujita.yoshihiko+to@gmail.com";
     context.interface_name    = "eth0";
-    context.debug = 0;
 
     while ((opt = getopt(argc, argv, "mes:i:f:t:dc:")) != -1) {
         switch (opt) {
@@ -51,20 +50,17 @@ int main (int argc, char *argv[]) {
             case 't':
                 context.email_from = optarg;
                 break;
-            case 'd':
-                context.debug = 1;
-                break;
             case 'c':
                 macaddr_config_path = optarg;
                 break;
         }
     }
 
-    //context.socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
-    //if(context.socket == -1 ) {
-    //    perror("socket error");
-    //    exit(1);
-    //}
+    context.socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
+    if(context.socket == -1 ) {
+        perror("socket error");
+        exit(1);
+    }
 
     /* 
         簡易的にRUN_MODE_DELAYの場合のゾンビ回避 
@@ -83,9 +79,9 @@ int main (int argc, char *argv[]) {
     _register_config_macaddr(macaddr_config_path);
 
     /* 自分自身のMACアドレスは拒否しないように登録する */
-    //_register_my_macaddr();
+    _register_my_macaddr();
 
-    //server_start();
+    server_start();
 
     return 0;
 }
