@@ -10,8 +10,8 @@
 
 extern struct ncad_task_context context;
 
-void _mail_send(const char *title, const char *body);
-char* _make_body(char* buf, const struct ether_arp *arppack);
+static void _mail_send(const char *title, const char *body);
+static char* _make_body(char* buf, const struct ether_arp *arppack);
 
 void server_detect(const struct ether_arp *arppack) {
 

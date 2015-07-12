@@ -24,7 +24,7 @@ void mac_table_add(const unsigned char* macaddr){
     _generate_key(key, macaddr);
 
     e.key  = key;
-    e.data = (void*)macaddr; /* 中身変更される事は無いからconst外し */
+    e.data = key;
     if(!hsearch(e, ENTER)) {
 	perror("mac_table_add error");
 	exit(1);

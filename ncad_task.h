@@ -13,6 +13,7 @@ struct ncad_task_context {
     char* email_from;
     char* email_to;
     char* interface_name;
+    int debug;
 }; 
 
 extern struct ncad_task_context context;

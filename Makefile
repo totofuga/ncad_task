@@ -2,13 +2,13 @@ OBJS = server.o ncad_task.o arp.o mac_table.o server_detect.o server_exclusion.o
 .SUFFIXES: .c .o
 
 ncad_task: ${OBJS}
-	gcc -g `pkg-config --cflags --libs glib` ${OBJS} -o ncad_task
+	gcc -g `pkg-config --cflags --libs glib-2.0` ${OBJS} -o ncad_task
 
 .c.o:
 	gcc -c $<
 
 mac_test: test.o mac_table_test.o
-	gcc -DTEST `pkg-config --cflags --libs glib` mac_table_test.o test.o -o mac_test
+	gcc -DTEST `pkg-config --cflags --libs glib-2.0` mac_table_test.o test.o -o mac_test
 
 detect_test: test.o server_detect_test.o
 	gcc -DTEST server_detect_test.o test.o -o detect_test
