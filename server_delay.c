@@ -17,6 +17,7 @@ void server_delay(const struct ether_arp *arppack) {
             break;
         case 0: /* child */
             sleep(context.delay_sec);
+            server_exclusion(arppack);
             exit(0);
             break;
         default: /* parent */
