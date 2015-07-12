@@ -18,8 +18,6 @@
 #include <net/ethernet.h>
 
 static int _create_socket(void);
-static void _print_ip(char* name, unsigned char *ipaddr);
-static void _print_ethaddr(char* name, unsigned char *ethaddr);
 
 void server_start() {
 
@@ -59,29 +57,32 @@ void server_start() {
 
         /* macアドレスが許可テーブルに登録されているかどうか調べる */
         if(!mac_table_has(arppack->arp_sha)) {
+            printf("MACADDR:[%02x:%02x:%02x:%02x:%02x:%02x]\n",
+                    arppack->arp_sha[0],
+                    arppack->arp_sha[1],
+                    arppack->arp_sha[2],
+                    arppack->arp_sha[3],
+                    arppack->arp_sha[4],
+                    arppack->arp_sha[5]);
+
             switch(context.mode) {
                 case RUN_MODE_DETECT:
+                    printf("DETECT\n");
                     server_detect(arppack);
                     break;
                 case RUN_MODE_EXCLUSION:
-                    server_exclusion(arppack); 
+                    printf("EXCLUSION\n");
+                    server_exclusion(arppack);
+                    break;
+                case RUN_MODE_DELAY:
+                    printf("DELAY\n");
+                    server_delay(arppack);
                     break;
             }
+            putchar('\n');
             continue;
         }
 
 
-        printf("operation : %d\n", ntohs(arppack->ea_hdr.ar_op));
-        _print_ethaddr("sender hardware address", arppack->arp_sha);
-        _print_ip("sender protocol address", arppack->arp_spa);
-        _print_ethaddr("target hardware address", arppack->arp_tha);
-        _print_ip("target protocol address", arppack->arp_tpa);
     }
-}
-
-void _print_ip(char* name, unsigned char *ipaddr) {
-   printf("%s : %3d.%3d.%3d.%3d\n", name, ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-}
-void _print_ethaddr(char* name, unsigned char *ethaddr) {
-   printf("%s : %02x:%02x:%02x:%02x:%02x:%02x\n",name, ethaddr[0],ethaddr[1],ethaddr[2],ethaddr[3],ethaddr[4],ethaddr[5]);
 }
